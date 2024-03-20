@@ -59,8 +59,8 @@ module Users
     def execute
       user = User.new(params.except(:interests, :skills))
 
-      params['interests'].each { |interest| user.interests << Interest.find_or_initialize_by(name: interest) }
-      params['skills'].split(',').each { |skill| user.skills << Skill.find_or_initialize_by(name: skill) }
+      params['interests'].each { |name| user.interests.find_or_initialize_by(name:) }
+      params['skills'].split(',').each { |name| user.skills.find_or_initialize_by(name:) }
 
       errors.merge!(user.errors) unless user.save
 
