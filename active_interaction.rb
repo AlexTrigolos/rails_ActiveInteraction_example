@@ -33,13 +33,11 @@ end
 # In application we are using ActiveInteraction gem => https://github.com/AaronLasseigne/active_interaction
 module Users
   class Create < ActiveInteraction::Base
-    hash :params do
-      string :name, :patronymic, :email, :nationality, :country, :gender
-      integer :age
+    string :name, :patronymic, :email, :nationality, :country, :gender
+    integer :age
 
-      string :surname, :fullname, :skills, default: nil
-      array :interests, default: nil
-    end
+    string :surname, :fullname, :skills, default: nil
+    array :interests, default: nil
 
     VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
 
@@ -57,7 +55,8 @@ module Users
     end
 
     def execute
-      user = User.new(params.except(:interests, :skills))
+      user = User.includes(:interests, :skills)
+                 .new(name:, patronymic:, email:, nationality:, country:, gender:, age:, surname:, fullname:)
 
       params['interests'].each { |name| user.interests.find_or_initialize_by(name:) }
       params['skills'].split(',').each { |name| user.skills.find_or_initialize_by(name:) }
